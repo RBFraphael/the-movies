@@ -43,58 +43,77 @@ class ProcessMovies extends BaseWpJson
 
     private function processMovie(WP_Post $movie)
     {
+        $this->updateMovieData($movie);
+        $this->setMovieGenres($movie);
+        $this->importMovieImage($movie);
+
+        update_post_meta($movie->ID, 'tmdb_processed', 1);
+    }
+
+    private function updateMovieData(WP_Post $movie)
+    {
         $movieId = get_post_meta($movie->ID, 'tmdb_id', true);
         $movieData = TMDB::getMovieData($movieId);
 
-        update_post_meta($movie->ID, 'tmdb_adult', $movieData['adult']);
-        update_post_meta($movie->ID, 'tmdb_backdrop_path', $movieData['backdrop_path']);
-        update_post_meta($movie->ID, 'tmdb_id', $movieData['id']);
-        update_post_meta($movie->ID, 'tmdb_original_language', $movieData['original_language']);
-        update_post_meta($movie->ID, 'tmdb_popularity', $movieData['popularity']);
-        update_post_meta($movie->ID, 'tmdb_poster_path', $movieData['poster_path']);
-        update_post_meta($movie->ID, 'tmdb_release_date', $movieData['release_date']);
-        update_post_meta($movie->ID, 'tmdb_video', $movieData['video']);
-        update_post_meta($movie->ID, 'tmdb_vote_average', $movieData['vote_average']);
-        update_post_meta($movie->ID, 'tmdb_vote_count', $movieData['vote_count']);
+        $meta = [
+            'tmdb_adult' => $movieData['adult'],
+            'tmdb_backdrop_path' => $movieData['backdrop_path'],
+            'tmdb_id' => $movieData['id'],
+            'tmdb_original_language' => $movieData['original_language'],
+            'tmdb_popularity' => $movieData['popularity'],
+            'tmdb_poster_path' => $movieData['poster_path'],
+            'tmdb_release_date' => $movieData['release_date'],
+            'tmdb_video' => $movieData['video'],
+            'tmdb_vote_average' => $movieData['vote_average'],
+            'tmdb_vote_count' => $movieData['vote_count'],
+        ];
+
+        foreach ($meta as $key => $value) {
+            update_post_meta($movie->ID, $key, $value);
+        }
 
         wp_update_post([
             'ID' => $movie->ID,
             'post_title' => $movieData['title'],
         ]);
+    }
 
-        // require_once(ABSPATH . 'wp-admin/includes/image.php');
-        // require_once(ABSPATH . 'wp-admin/includes/file.php');
-        // require_once(ABSPATH . 'wp-admin/includes/media.php');
+    private function setMovieGenres(WP_Post $movie)
+    {
+        $genresIds = get_post_meta($movie->ID, 'tmdb_genre_ids', true);
+        $genres = get_terms([
+            'taxonomy' => 'genre',
+            'hide_empty' => false,
+            'meta_key' => 'tmdb_id',
+            'meta_value' => $genresIds
+        ]);
+        $ids = array_map(function ($genre) {
+            return $genre->term_id;
+        }, $genres);
+        wp_set_object_terms($movie->ID, $ids, 'genre');
+    }
 
-        // $genresIds = get_post_meta($movie->ID, 'tmdb_genre_ids', true);
-        // $genres = get_terms([
-        //     'taxonomy' => 'genre',
-        //     'hide_empty' => false,
-        //     'meta_key' => 'tmdb_id',
-        //     'meta_value' => $genresIds
-        // ]);
-        // $ids = array_map(function ($genre) {
-        //     return $genre->term_id;
-        // }, $genres);
-        // wp_set_object_terms($movie->ID, $ids, 'genre');
+    private function importMovieImage(WP_Post $movie)
+    {
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
 
-        // $image = get_post_meta($movie->ID, 'tmdb_poster_path', true);
-        // if($image){
-        //     $imageUrl = "https://image.tmdb.org/t/p/original" . $image;
+        $image = get_post_meta($movie->ID, 'tmdb_poster_path', true);
+        if ($image) {
+            $imageUrl = "https://image.tmdb.org/t/p/original" . $image;
 
-        //     $download = download_url($imageUrl);
-        //     if(!is_wp_error($download)){
-        //         $fileArray = [
-        //             'name' => basename($imageUrl),
-        //             'tmp_name' => $download
-        //         ];
-        //         $attachment = media_handle_sideload($fileArray, $movie->ID, $movie->post_title . " - Movie poster");
-        //         if(!is_wp_error($attachment)){
-        //             set_post_thumbnail($movie->ID, $attachment);
-        //         }
-        //     }
-        // }
-
-        update_post_meta($movie->ID, 'tmdb_processed', 1);
+            $download = download_url($imageUrl);
+            if (!is_wp_error($download)) {
+                $fileArray = [
+                    'name' => basename($imageUrl),
+                    'tmp_name' => $download
+                ];
+                $attachment = media_handle_sideload($fileArray, $movie->ID, $movie->post_title . " - Movie poster");
+                if (!is_wp_error($attachment)) {
+                    set_post_thumbnail($movie->ID, $attachment);
+                }
+            }
+        }
     }
 }
