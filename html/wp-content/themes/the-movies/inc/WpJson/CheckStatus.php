@@ -5,7 +5,7 @@ namespace WpTheme\WpJson;
 use WP_REST_Request;
 use WP_REST_Response;
 
-class ImportActors extends BaseWpJson
+class CheckStatus extends BaseWpJson
 {
     protected string $namespace = "the-movies/v1";
     protected string $endpoint = "status";
