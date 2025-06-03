@@ -1,0 +1,38 @@
+<?php
+
+namespace WpTheme\CarbonFields\Blocks;
+
+use Carbon_Fields\Field;
+
+class UpcomingMovies extends BaseBlock
+{
+    protected string $blockName = "Upcoming Movies";
+
+    public function fields()
+    {
+        return [
+            Field::make("text", "title", __("Title")),
+            Field::make("text", "amount", __("Amount"))
+                ->set_attribute("type", "number")
+                ->set_attribute("min", "1")
+                ->set_attribute("max", "10"),
+        ];
+    }
+
+    public function render($fields, $attributes, $inner_blocks)
+    {
+        $movies = get_posts([
+            'post_type' => 'movie',
+            'post_status' => 'publish',
+            'posts_per_page' => $fields["amount"],
+            'meta_key' => 'tmdb_release_date',
+            'orderby' => 'meta_value_num',
+            'order' => 'ASC'
+        ]);
+        
+        return get_template_part("resources/views/blocks/upcoming-movies", null, [
+            "title" => $fields["title"],
+            "movies" => $movies
+        ]);
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "the-movies",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/glidejs__glide": "^3.6.6",
+    "browser-sync": "^3.0.4",
+    "concurrently": "^9.1.2",
+    "sass": "^1.89.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "@glidejs/glide": "^3.7.1",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.6"
+  }
+}

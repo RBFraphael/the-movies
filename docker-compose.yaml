@@ -1,0 +1,50 @@
+services:
+  wordpress_app:
+    container_name: wordpress_app
+    build: .
+    volumes:
+      - ./html:/var/www/html
+      - ./docker/apache/sites-available:/etc/apache2/sites-available
+      - ./docker/apache/logs:/var/log/apache2
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: wordpress_db
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    networks:
+      - wordpress_network
+
+  wordpress_db:
+    container_name: wordpress_db
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ./docker/mysql/storage:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - wordpress_network
+
+  wordpress_pma:
+    container_name: wordpress_pma
+    image: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: wordpress_db
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - wordpress_network
+
+networks:
+  wordpress_network:
+    driver: bridge

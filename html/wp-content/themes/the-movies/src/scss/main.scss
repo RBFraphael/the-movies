@@ -1,0 +1,10 @@
+@import "variables";
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+@import "../../node_modules/@glidejs/glide/src/assets/sass/glide.core.scss";
+@import "../../node_modules/@glidejs/glide/src/assets/sass/glide.theme.scss";
+
+@import "common";
+
+@import "blocks/upcoming-movies";
+@import "blocks/popular-actors";

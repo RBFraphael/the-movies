@@ -1,0 +1,21 @@
+.block {
+    &__upcoming-movies {
+        &__movies {
+            &__movie {
+                padding: 2rem;
+                display: flex;
+                flex-direction: row;
+                gap: 2rem;
+
+                &_details {
+                    flex-grow: 1;
+                    color: $white;
+                }
+
+                &__poster {
+                    width: 30%;
+                }
+            }
+        }
+    }
+}
