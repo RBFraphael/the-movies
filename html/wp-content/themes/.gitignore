@@ -1,0 +1,4 @@
+*
+!.gitignore
+!the-movies/
+!the-movies/**/*
