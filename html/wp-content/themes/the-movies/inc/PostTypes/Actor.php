@@ -25,5 +25,8 @@ class Actor extends BasePostType
         'taxonomies' => [
             'genre',
         ],
+        'rewrite' => [
+            'slug' => 'actors'
+        ]
     ];
 }

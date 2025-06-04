@@ -81,6 +81,7 @@ class ImportMovies extends BaseWpJson
                 'post_content' => $movieData['overview'],
                 'post_type' => "movie",
                 'post_status' => "publish",
+                'post_date' => date('Y-m-d H:i:s', strtotime($movieData['release_date'])),
                 'meta_input' => [
                     'tmdb_processed' => 0,
                     'tmdb_adult' => $movieData['adult'] ? 1 : 0,

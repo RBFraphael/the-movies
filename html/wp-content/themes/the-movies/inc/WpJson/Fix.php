@@ -16,12 +16,39 @@ class Fix extends BaseWpJson
         $totalDeleted = $this->deleteUnindentified();
         $totalUntitled = $this->fixUntitled();
         $totalIncomplete = $this->fixIncomplete();
+        $totalDateFixed = $this->fixPostDates();
 
         return new WP_REST_Response([
             'deleted' => $totalDeleted,
             'untitled' => $totalUntitled,
-            'incomplete' => $totalIncomplete
+            'incomplete' => $totalIncomplete,
+            'dateFixed' => $totalDateFixed,
         ]);
+    }
+
+    private function fixPostDates()
+    {
+        $movies = get_posts([
+            'post_type' => 'movie',
+            'post_status' => 'any',
+            'posts_per_page' => -1,
+        ]);
+
+        $fixed = 0;
+
+        foreach($movies as $movie){
+            $releaseDate = get_post_meta($movie->ID, 'tmdb_release_date', true);
+            $publishDate = date('Y-m-d H:i:s', strtotime($releaseDate));
+
+            wp_update_post([
+                'ID' => $movie->ID,
+                'post_date' => $publishDate
+            ]);
+
+            $fixed++;
+        }
+
+        return $fixed;
     }
 
     private function fixUntitled()

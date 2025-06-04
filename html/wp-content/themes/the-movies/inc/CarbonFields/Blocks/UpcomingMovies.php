@@ -25,13 +25,14 @@ class UpcomingMovies extends BaseBlock
             'post_type' => 'movie',
             'post_status' => 'publish',
             'posts_per_page' => $fields["amount"],
-            'meta_key' => 'tmdb_release_date',
-            'orderby' => 'meta_value_num',
-            'order' => 'ASC'
+            'orderby' => 'date',
+            'order' => 'DESC'
         ]);
+
+        $movies = array_reverse($movies);
         
         return get_template_part("resources/views/blocks/upcoming-movies", null, [
-            "title" => $fields["title"],
+            "fields" => $fields,
             "movies" => $movies
         ]);
     }

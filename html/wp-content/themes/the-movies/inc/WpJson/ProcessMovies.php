@@ -45,6 +45,7 @@ class ProcessMovies extends BaseWpJson
     {
         $this->updateMovieData($movie);
         $this->setMovieGenres($movie);
+        $this->setMovieYear($movie);
         $this->importMovieImage($movie);
 
         update_post_meta($movie->ID, 'tmdb_processed', 1);
@@ -91,6 +92,28 @@ class ProcessMovies extends BaseWpJson
             return $genre->term_id;
         }, $genres);
         wp_set_object_terms($movie->ID, $ids, 'genre');
+    }
+
+    private function setMovieYear(WP_Post $movie)
+    {
+        $year = get_the_Date("Y", $movie);
+        $existingYears = get_terms([
+            'hide_empty' => false,
+            'taxonomy' => 'movie_year'
+        ]);
+
+        $set = false;
+        foreach($existingYears as $existingYear){
+            if($existingYear->name == $year){
+                wp_set_object_terms($movie->ID, $existingYear->term_id, 'movie_year');
+                $set = true;
+                break;
+            }
+        }
+
+        if(!$set){
+            
+        }
     }
 
     private function importMovieImage(WP_Post $movie)

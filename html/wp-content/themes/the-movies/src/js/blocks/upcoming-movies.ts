@@ -1,8 +1,15 @@
 import Glide from "@glidejs/glide";
 
 const init = () => {
-    console.log("init upcoming movies");
-    (new Glide(".block__upcoming-movies__movies")).mount();
+    const carousel = new Glide(".block__upcoming-movies__movies", {
+        autoplay: 5000,
+        hoverpause: true,
+        peek: {
+            before: 100,
+            after: 100
+          }
+    });
+    carousel.mount();
 }
 
 export default init;

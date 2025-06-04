@@ -84,53 +84,55 @@
     });
 
     const doAction = (button, url, successMessage, errorMessage) => {
-        button.querySelector("img").style.display = "inline";
-        button.disabled = true;
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: "{}",
-        }).then(() => {
-            alert(successMessage);
-        }).catch((error) => {
-            if (error.name === 'AbortError') return;
+            button.querySelector("img").style.display = "inline";
+            button.disabled = true;
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: "{}",
+            }).then(() => {
+                alert(successMessage);
+            }).catch((error) => {
+                if (error.name === 'AbortError') {
+                    return;
+                } else {
+                    console.error(error);
+                    alert(errorMessage);
+                }
+            }).finally(() => {
+                button.querySelector("img").style.display = "none";
+                button.disabled = false;
+            });
+        }
 
-            console.error(error);
-            alert(errorMessage);
-        }).finally(() => {
-            button.querySelector("img").style.display = "none";
-            button.disabled = false;
-        });
-    }
+        const checkStatus = () => {
+            fetch(`/wp-json/the-movies/v1/status`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            }).then((data) => data.json()).then((data) => {
+                syncMoviesButton.disabled = data.importingMovies;
+                syncMoviesButton.querySelector("img").style.display = data.importingMovies ? "inline" : "none";
 
-    const checkStatus = () => {
-        fetch(`/wp-json/the-movies/v1/status`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-        }).then((data) => data.json()).then((data) => {
-            syncMoviesButton.disabled = data.importingMovies;
-            syncMoviesButton.querySelector("img").style.display = data.importingMovies ? "inline" : "none";
-            
-            processMoviesButton.disabled = data.processingMovies;
-            processMoviesButton.querySelector("img").style.display = data.processingMovies ? "inline" : "none";
-            
-            syncActorsButton.disabled = data.importingActors;
-            syncActorsButton.querySelector("img").style.display = data.importingActors ? "inline" : "none";
+                processMoviesButton.disabled = data.processingMovies;
+                processMoviesButton.querySelector("img").style.display = data.processingMovies ? "inline" : "none";
 
-            processActorsButton.disabled = data.processingActors;
-            processActorsButton.querySelector("img").style.display = data.processingActors ? "inline" : "none";
+                syncActorsButton.disabled = data.importingActors;
+                syncActorsButton.querySelector("img").style.display = data.importingActors ? "inline" : "none";
 
-            syncGenresButton.disabled = data.importingGenres;
-            syncGenresButton.querySelector("img").style.display = data.importingGenres ? "inline" : "none";
-        }).catch((error) => {
-            console.error(error);
-        });
-    }
+                processActorsButton.disabled = data.processingActors;
+                processActorsButton.querySelector("img").style.display = data.processingActors ? "inline" : "none";
 
-    const checkInterval = setInterval(checkStatus, 5000);
+                syncGenresButton.disabled = data.importingGenres;
+                syncGenresButton.querySelector("img").style.display = data.importingGenres ? "inline" : "none";
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        const checkInterval = setInterval(checkStatus, 5000);
 </script>

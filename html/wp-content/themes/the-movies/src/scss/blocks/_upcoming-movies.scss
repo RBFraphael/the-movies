@@ -1,19 +1,40 @@
 .block {
     &__upcoming-movies {
+        margin-bottom: 5rem;
+
+        &__title {
+            margin-bottom: 2.5rem;
+
+            &__text {
+                font-weight: normal;
+                text-transform: uppercase;
+                color: rgb(70, 70, 70);
+            }
+        }
+
         &__movies {
             &__movie {
                 padding: 2rem;
                 display: flex;
                 flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
                 gap: 2rem;
+                color: $white;
 
-                &_details {
-                    flex-grow: 1;
+                &__details {
                     color: $white;
+                    width: 60%;
                 }
 
                 &__poster {
-                    width: 30%;
+                    width: 40%;
+                    perspective: 1000px;
+
+                    img {
+                        transform: rotateY(-15deg);
+                        transform-style: preserve-3d;
+                    }
                 }
             }
         }

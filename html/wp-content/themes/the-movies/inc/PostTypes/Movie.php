@@ -24,7 +24,10 @@ class Movie extends BasePostType
             'custom-fields',
         ],
         'taxonomies' => [
-            'genre',
+            'genre', 'movie_year'
         ],
+        'rewrite' => [
+            'slug' => 'movies'
+        ]
     ];
 }
