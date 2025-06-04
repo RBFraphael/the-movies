@@ -7,7 +7,7 @@ class WpEnqueueScripts extends BaseHook
     protected string $type = "action";
     protected string $hook = "wp_enqueue_scripts";
 
-    public function run()
+    public function run(...$args)
     {
         $this->styles();
         $this->scripts();

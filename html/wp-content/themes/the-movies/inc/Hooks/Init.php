@@ -10,7 +10,7 @@ class Init extends BaseHook
     protected string $type = "action";
     protected string $hook = "init";
 
-    public function run()
+    public function run(...$args)
     {
         $this->registerPostTypes();
         $this->registerTaxonomies();

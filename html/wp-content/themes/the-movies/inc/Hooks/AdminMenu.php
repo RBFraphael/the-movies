@@ -9,7 +9,7 @@ class AdminMenu extends BaseHook
     protected string $type = "action";
     protected string $hook = "admin_menu";
 
-    public function run()
+    public function run(...$args)
     {
         $this->loadOptionsPages();
     }

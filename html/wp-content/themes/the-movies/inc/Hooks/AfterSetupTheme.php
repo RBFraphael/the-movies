@@ -7,7 +7,7 @@ class AfterSetupTheme extends BaseHook
     protected string $type = "action";
     protected string $hook = "after_setup_theme";
 
-    public function run()
+    public function run(...$args)
     {
         $this->bootCarbonFields();
         $this->registerNavMenus();

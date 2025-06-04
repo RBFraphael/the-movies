@@ -9,7 +9,7 @@ class RestApiInit extends BaseHook
     protected string $type = "action";
     protected string $hook = "rest_api_init";
 
-    public function run()
+    public function run(...$args)
     {
         $this->loadWpJsonEndpoints();
     }

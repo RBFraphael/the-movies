@@ -9,7 +9,7 @@ abstract class BaseHook {
     protected int $priority = 10;
     protected int $accepted_args = 1;
 
-    abstract public function run();
+    abstract public function run(...$args);
 
     public function register() {
         if($this->type == "action"){

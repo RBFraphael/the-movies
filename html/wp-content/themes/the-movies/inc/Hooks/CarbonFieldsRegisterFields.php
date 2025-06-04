@@ -11,7 +11,7 @@ class CarbonFieldsRegisterFields extends BaseHook
     protected string $type = "action";
     protected string $hook = "carbon_fields_register_fields";
 
-    public function run()
+    public function run(...$args)
     {
         $this->loadOptionsPages();
         $this->loadPostMetas();
