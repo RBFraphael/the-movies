@@ -1,9 +1,7 @@
 <div class="block block__popular-actors">
     <div class="row">
         <div class="col-12 block__popular-actors__title">
-            <h2 class="block__popular-actors__title__text">
-                <?php echo $args['title']; ?>
-            </h2>
+            <h1 class="display-2 text-secondary"><?php echo $args['title']; ?></h1>
         </div>
     </div>
 

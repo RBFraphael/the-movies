@@ -1,9 +1,7 @@
 <div class="block block__upcoming-movies">
     <div class="row">
         <div class="col-12 block__upcoming-movies__title">
-            <h2 class="block__upcoming-movies__title__text">
-                <?php echo $args['fields']['title']; ?>
-            </h2>
+            <h1 class="display-2 text-secondary"><?php echo $args['title']; ?></h1>
         </div>
     </div>
 

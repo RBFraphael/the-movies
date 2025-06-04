@@ -11,7 +11,7 @@ class PreGetPosts extends BaseHook
     {
         $query = $args[0];
 
-        if (!is_admin() && $query->is_main_query() && is_post_type_archive('movie')) {
+        if (!is_admin() && $query->is_main_query() && (is_post_type_archive('movie') || is_post_type_archive('actor'))) {
             $query->set('orderby', 'title');
             $query->set('order', 'ASC');
         }
