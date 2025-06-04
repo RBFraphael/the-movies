@@ -17,7 +17,7 @@ class ProcessActors extends BaseWpJson
         set_time_limit(0);
         update_option('tmdb_processing_actors', 1);
 
-        $movies = get_posts([
+        $actors = get_posts([
             'post_type' => "actor",
             'posts_per_page' => -1,
             'post_status' => "any",
@@ -28,8 +28,8 @@ class ProcessActors extends BaseWpJson
 
         $processed = 0;
 
-        foreach ($movies as $movie) {
-            $this->processActor($movie);
+        foreach ($actors as $actor) {
+            $this->processActor($actor);
             $processed++;
         }
 
@@ -41,6 +41,14 @@ class ProcessActors extends BaseWpJson
     }
 
     private function processActor(WP_Post $actor)
+    {
+        // $this->importActorImage($actor);
+        $this->addActorMovies($actor);
+
+        update_post_meta($actor->ID, 'tmdb_processed', 1);
+    }
+
+    private function importActorImage(WP_Post $actor)
     {
         require_once(ABSPATH . 'wp-admin/includes/image.php');
         require_once(ABSPATH . 'wp-admin/includes/file.php');
@@ -62,56 +70,20 @@ class ProcessActors extends BaseWpJson
                 }
             }
         }
-
-        $relatedMovies = get_post_meta($actor->ID, "tmdb_known_for", true);
-        if($relatedMovies){
-            $moviesIds = [];
-            foreach($relatedMovies as $relatedMovie){
-                $movies = get_posts([
-                    'post_type' => "movie",
-                    'posts_per_page' => 1,
-                    'post_status' => "any",
-                    'meta_query' => [
-                        ['key' => 'tmdb_id', 'value' => $relatedMovie['id']]
-                    ]
-                ]);
-
-                if(count($movies) > 0){
-                    $moviesIds[] = $movies[0]->ID;
-                } else {
-                    $moviesIds[] = $this->addMovie($relatedMovie);
-                }
-            }
-
-            carbon_set_post_meta($actor->ID, 'associated_movies', $moviesIds);
-        }
-
-        update_post_meta($actor->ID, 'tmdb_processed', 1);
     }
 
-    private function addMovie($movieData)
+    private function addActorMovies(WP_Post $actor)
     {
-        $movie = wp_insert_post([
-            'post_title' => $movieData['title'],
-            'post_content' => $movieData['overview'],
-            'post_type' => "movie",
-            'post_status' => "publish",
-            'meta_input' => [
-                'tmdb_processed' => 0,
-                'tmdb_adult' => $movieData['adult'] ? 1 : 0,
-                'tmdb_backdrop_path' => $movieData['backdrop_path'],
-                'tmdb_genre_ids' => $movieData['genre_ids'],
-                'tmdb_id' => $movieData['id'],
-                'tmdb_original_language' => $movieData['original_language'],
-                'tmdb_popularity' => $movieData['popularity'],
-                'tmdb_poster_path' => $movieData['poster_path'],
-                'tmdb_release_date' => $movieData['release_date'],
-                'tmdb_video' => $movieData['video'] ? 1 : 0,
-                'tmdb_vote_average' => $movieData['vote_average'],
-                'tmdb_vote_count' => $movieData['vote_count'],
-            ]
-        ]);
+        global $wpdb;
 
-        return $movie;
+        $relatedMovies = get_post_meta($actor->ID, "tmdb_known_for", true);
+        $relatedMoviesIds = array_map(function ($movie) {
+            return $movie['id'];
+        }, $relatedMovies);
+
+        $query = "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'tmdb_id' AND meta_value IN (" . implode(',', $relatedMoviesIds) . ")";
+        $moviesIds = $wpdb->get_col($query);
+
+        carbon_set_post_meta($actor->ID, 'associated_movies', $moviesIds);
     }
 }

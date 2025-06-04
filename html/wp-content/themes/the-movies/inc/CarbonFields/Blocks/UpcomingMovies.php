@@ -23,7 +23,7 @@ class UpcomingMovies extends BaseBlock
     {
         $movies = get_posts([
             'post_type' => 'movie',
-            'post_status' => 'publish',
+            'post_status' => 'any',
             'posts_per_page' => $fields["amount"],
             'orderby' => 'date',
             'order' => 'DESC'

@@ -7,7 +7,7 @@
         gap: 2rem;
 
         &__poster {
-            width: 35%;
+            width: 25%;
             box-shadow: 0 1rem 3rem rgba($white, .35);
 
             .wrapper {
@@ -30,7 +30,7 @@
 
         &__details {
             color: $white;
-            width: 65%;
+            width: 75%;
         }
     }
 }

@@ -46,7 +46,7 @@ class ProcessMovies extends BaseWpJson
         $this->updateMovieData($movie);
         $this->setMovieGenres($movie);
         $this->setMovieYear($movie);
-        $this->importMovieImage($movie);
+        // $this->importMovieImage($movie);
 
         update_post_meta($movie->ID, 'tmdb_processed', 1);
     }
@@ -112,7 +112,8 @@ class ProcessMovies extends BaseWpJson
         }
 
         if(!$set){
-            
+            $termData = wp_insert_term($year, 'movie_year');
+            wp_set_object_terms($movie->ID, $termData['term_id'], 'movie_year');
         }
     }
 

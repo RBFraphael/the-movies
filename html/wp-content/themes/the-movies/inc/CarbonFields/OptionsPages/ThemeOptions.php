@@ -15,11 +15,11 @@ class ThemeOptions extends BaseOptionsPage
             Field::make('text', 'tmdb_api_key', __('TMDB API Key')),
             Field::make('text', 'tmdb_max_import_movies', __('Maximum number of upcoming movies to import (leave 0 to import all)'))
                 ->set_help_text(__('This will not affect movies imported by importing Actors'))
-                ->set_default_value(0)
+                ->set_default_value(100)
                 ->set_attribute("type", "number"),
             Field::make('text', 'tmdb_max_import_actors', __('Maximum number of popular actors to import (leave 0 to import all)'))
                 ->set_help_text(__('When importing actors, all related movies will be imported as well'))
-                ->set_default_value(1000)
+                ->set_default_value(100)
                 ->set_attribute("type", "number"),
             Field::make('text', 'tmdb_max_import_genres', __('Maximum number of genres to import (leave 0 to import all)'))
                 ->set_default_value(0)

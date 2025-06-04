@@ -21,7 +21,7 @@ class ImportMovies extends BaseWpJson
         $totalPages = $data['total_pages'];
 
         $totalProcessed = $this->addMovies($data['results']);
-        $limit = carbon_get_theme_option('tmdb_max_import_movies');
+        $limit = carbon_get_theme_option('tmdb_max_import_movies') ?? 100;
 
         $page = 2;
         while ($page <= $totalPages) {
@@ -43,29 +43,13 @@ class ImportMovies extends BaseWpJson
 
     private function addMovies($movies = [])
     {
+        global $wpdb;
+        $query = "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'movie'";
+        $existingMovies = $wpdb->get_col($query);
+        $query = "SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'tmdb_id' AND post_id IN (" . implode(',', $existingMovies) . ")";
+        $existingIds = $wpdb->get_col($query);
+
         $totalAdded = 0;
-
-        $ids = array_map(function ($movie) {
-            return $movie['id'];
-        }, $movies);
-
-        $existingPosts = get_posts([
-            'post_type' => "movie",
-            'posts_per_page' => -1,
-            'post_status' => "any",
-            'meta_query' => [
-                [
-                    'key' => 'tmdb_id',
-                    'value' => $ids,
-                    'compare' => 'NOT IN'
-                ]
-            ]
-        ]);
-
-        $existingIds = [];
-        foreach($existingPosts as $post) {
-            $existingIds[] = get_post_meta($post->ID, 'tmdb_id', true);
-        }
 
         foreach ($movies as $movieData) {
             if(!$this->isValid($movieData)) {

@@ -13,15 +13,15 @@ class Fix extends BaseWpJson
 
     public function handler(WP_REST_Request $request)
     {
-        $totalDeleted = $this->deleteUnindentified();
-        $totalUntitled = $this->fixUntitled();
-        $totalIncomplete = $this->fixIncomplete();
+        // $totalDeleted = $this->deleteUnindentified();
+        // $totalUntitled = $this->fixUntitled();
+        // $totalIncomplete = $this->fixIncomplete();
         $totalDateFixed = $this->fixPostDates();
 
         return new WP_REST_Response([
-            'deleted' => $totalDeleted,
-            'untitled' => $totalUntitled,
-            'incomplete' => $totalIncomplete,
+            // 'deleted' => $totalDeleted,
+            // 'untitled' => $totalUntitled,
+            // 'incomplete' => $totalIncomplete,
             'dateFixed' => $totalDateFixed,
         ]);
     }

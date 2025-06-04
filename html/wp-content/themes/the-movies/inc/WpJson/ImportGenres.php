@@ -29,7 +29,7 @@ class ImportGenres extends BaseWpJson
         }
 
         $totalProcessed = 0;
-        $limit = carbon_get_theme_option('tmdb_max_import_genres');
+        $limit = carbon_get_theme_option('tmdb_max_import_genres') ?? 0;
         
         foreach ($data['genres'] as $genreData) {
             if ($limit > 0 && $totalProcessed >= $limit) {
